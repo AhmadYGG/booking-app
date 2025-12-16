@@ -1,4 +1,4 @@
-import { integer, pgTable, text, date, time, timestamp, index } from "drizzle-orm/pg-core";
+import { integer, pgTable, text, date, time, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { customers } from "./customers";
 import { services } from "./services";

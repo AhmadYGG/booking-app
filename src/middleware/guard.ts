@@ -28,7 +28,7 @@ export const adminGuard = createMiddleware(async (c, next) => {
 
 	try {
 		const verified = (await verify(token, secret)) as CreateTokenDTO;
-		if (verified.role === "admin" || verified.role === "superadmin") {
+		if (verified.role === "admin" || verified.role === "owner") {
 			return next();
 		}
 		throw new Error();
@@ -42,7 +42,7 @@ export const adminGuard = createMiddleware(async (c, next) => {
 			return c.json({ message: "unauthorized" }, 401);
 		}
 		setCookie(c, "token", newToken, cookieOption);
-		if (payload.role === "admin" || payload.role === "superadmin") {
+		if (payload.role === "admin" || payload.role === "owner") {
 			return next();
 		}
 	}
@@ -68,7 +68,7 @@ export const userGuard = createMiddleware(async (c, next) => {
 
 	try {
 		const verified = (await verify(token, secret)) as CreateTokenDTO;
-		if (verified.role === "admin" || verified.role === "superadmin") {
+		if (verified.role === "admin" || verified.role === "owner") {
 			return next();
 		}
 	} catch (err) {
@@ -84,11 +84,6 @@ export const userGuard = createMiddleware(async (c, next) => {
 
 		setCookie(c, "token", newToken, cookieOption);
 	}
-
-	// const checkUserID = payload.id === +c.req.param("id")!;
-	// if (!checkUserID) {
-	// 	return c.json({ message: "unauthorized" }, 401);
-	// }
 
 	return await next();
 });

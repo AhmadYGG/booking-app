@@ -5,7 +5,6 @@ import { LoginDTO } from "./auth.dto";
 import { CreateUserDTO } from "../user/user.dto";
 import { setCookie } from "hono/cookie";
 import { cookieOption, cookieOptionNonHttp } from "../../common/cookieOption";
-import { getConnInfo } from "hono/bun";
 
 export class AuthController {
   constructor(
