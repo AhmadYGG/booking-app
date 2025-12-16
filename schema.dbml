@@ -1,0 +1,89 @@
+Table users {
+  id bigint [pk, increment]
+  name varchar
+  email varchar
+  phone varchar
+  password varchar
+  role varchar [note: "owner | admin | staff"]
+  is_active boolean
+  last_login_at datetime
+  created_at datetime
+  updated_at datetime
+}
+
+Table services {
+  id bigint [pk, increment]
+  service_name varchar
+  duration_minutes int [note: "durasi layanan (menit)"]
+  price decimal
+  description text
+  is_active boolean
+  created_at datetime
+  updated_at datetime
+}
+
+Table customers {
+  id bigint [pk, increment]
+  name varchar
+  phone varchar
+  email varchar [note: "opsional"]
+  notes text
+  created_at datetime
+  updated_at datetime
+}
+
+Table bookings {
+  id bigint [pk, increment]
+  booking_code varchar [unique, note: "contoh BK-20250101-001"]
+  customer_id bigint
+  service_id bigint
+  booking_date date
+  start_time time
+  end_time time
+  status varchar [note: "pending | confirmed | completed | canceled"]
+  notes text
+  created_at datetime
+  updated_at datetime
+}
+
+Table payments {
+  id bigint [pk, increment]
+  booking_id bigint
+  payment_method varchar [note: "cash | transfer | qris"]
+  payment_type varchar [note: "full | dp"]
+  amount decimal
+  payment_status varchar [note: "unpaid | paid"]
+  paid_at datetime
+  created_at datetime
+  updated_at datetime
+}
+
+Table settings {
+  id bigint [pk, increment]
+  business_name varchar
+  business_phone varchar
+  business_address text
+  open_time time
+  close_time time
+  booking_interval int [note: "misal 30 menit"]
+  created_at datetime
+  updated_at datetime
+}
+
+Table schedules {
+  id bigint [pk, increment]
+  day_of_week int [note: "1=Senin ... 7=Minggu"]
+  open_time time
+  close_time time
+  is_open boolean
+  created_at datetime
+  updated_at datetime
+}
+
+/* =====================
+   RELATIONSHIPS
+===================== */
+
+Ref: bookings.customer_id > customers.id
+Ref: bookings.service_id > services.id
+Ref: payments.booking_id > bookings.id
