@@ -12,33 +12,43 @@ export class AuthController {
     private userService: UserService,
   ) {}
 
-  async login(c: Context) {
-    const data = await c.req.json<LoginDTO>();
-    const user = await this.userService.getByUsername(data.username);
-    if (!user) {
-      return c.json({ message: "invalid username or password" }, 401);
-    }
+  	async login(c: Context) {
+		const data = await c.req.json<LoginDTO>();
+		const user = await this.userService.getByEmail(data.email);
+		if (!user) {
+			return c.json({ message: "invalid email or password" }, 401);
+		}
 
-    const verified = await this.authService.veryfy(
-      data.password,
-      user.password,
-    );
+		const verified = await this.authService.verifyPassword(
+			data.password,
+			user.password!,
+		);
 
-    if (!verified) {
-      return c.json({ message: "invalid username or password" }, 401);
-    }
+		if (!verified) {
+			return c.json({ message: "invalid email or password" }, 401);
+		}
 
-    const userAgent = c.req.header("User-Agent")!;
+		const userAgent = c.req.header("User-Agent")!;
 
-    const [token, _] = await Promise.all([
-      this.authService.createToken(user, 15),
-      this.authService.createRefreshToken(user, userAgent),
-    ]);
-    setCookie(c, "token", token, cookieOption);
-    setCookie(c, "role", user.role, cookieOptionNonHttp);
+		const [token, refreshToken] = await Promise.all([
+			this.authService.createToken(user, 15),
+			this.authService.createRefreshToken(user as any, userAgent),
+		]);
+		setCookie(c, "token", token, cookieOption);
+		setCookie(c, "role", user.role!, cookieOptionNonHttp);
 
-    return c.json({ message: "login success", token });
-  }
+		return c.json({
+			message: "login success",
+			data: {
+				token,
+				refreshToken,
+				user: {
+					email: user.email,
+					role: user.role,
+				},
+			},
+		});
+	}
 
   async logout(c: Context) {
     const userAgent = c.req.header("User-Agent")!;

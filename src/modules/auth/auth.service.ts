@@ -2,14 +2,16 @@ import { password } from "bun";
 import { sign } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { CreateRefreshTokenDTO, CreateTokenDTO } from "./auth.dto";
-import { AuthRepository } from "./auth.repository";
+import { db } from "../../database/connection";
+import { refreshTokens } from "../../database/schema/refreshTokens";
+import { eq, and } from "drizzle-orm";
 
 export class AuthService {
 	private secret: string = process.env.JWT_SECRET!;
 
-	constructor(private authRepo: AuthRepository) {}
+	constructor() {}
 
-	async veryfy(passwordTxt: string, hashPassword: string) {
+	async verifyPassword(passwordTxt: string, hashPassword: string) {
 		const verified = await password.verify(passwordTxt, hashPassword);
 		if (!verified) {
 			console.log("password not match");
@@ -20,12 +22,11 @@ export class AuthService {
 	/**
 	 * expired in minute
 	 * */
-	async createToken(payload: CreateTokenDTO, expired: number) {
-		const jwtPayload: JWTPayload = {
+	async createToken(payload: any, expired: number) {
+		const jwtPayload: CreateTokenDTO = {
 			id: payload.id,
-			username: payload.username,
-			position: payload.position,
-			role: payload.role,
+			email: payload.email,
+			role: payload.role || 'staff',
 			exp: Math.floor(Date.now() / 1000) + 60 * expired,
 		};
 		return await sign(jwtPayload, this.secret);
@@ -35,14 +36,27 @@ export class AuthService {
 		const expired = 43200; // menit (1 bulan)
 		const token = await this.createToken(payload, expired);
 		const data: CreateRefreshTokenDTO = {
-			username: payload.username,
+			email: payload.email,
 			userAgent: userAgent,
 			token: token,
 		};
-		await this.authRepo.creteRefreshToken(data);
+		
+		await db
+			.insert(refreshTokens)
+			.values(data)
+			.onConflictDoUpdate({
+				target: refreshTokens.userAgent,
+				set: {
+					email: data.email,
+					token: data.token,
+				},
+			});
+		return token;
 	}
 
 	async deleteRefreshToken(userAgent: string) {
-		return await this.authRepo.delete(userAgent);
+		return await db
+			.delete(refreshTokens)
+			.where(eq(refreshTokens.userAgent, userAgent));
 	}
 }

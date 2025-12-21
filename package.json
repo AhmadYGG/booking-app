@@ -4,11 +4,11 @@
     "dev": "bun run --watch src/index.ts",
     "build": "bun build ./src/index.ts --compile --target=bun --outfile app",
     "seed:admin": "bun ./src/database/seed-admin.ts",
-    "seed:position": "bun ./src/database/seed-position.ts",
     "push": "drizzle-kit push",
     "test": "bun test --coverage"
   },
   "dependencies": {
+    "@hono/valibot-validator": "^0.6.1",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "drizzle": "^1.4.0",

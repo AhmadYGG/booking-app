@@ -6,16 +6,18 @@ import { CreateUserDTO, UpdateUserDTO } from "./user.dto";
 export class UserController {
 	constructor(private userService: UserService) {}
 	async get(c: Context) {
-		const page = c.req.query("page");
-		const limit = c.req.query("limit");
+		const page = parseInt(c.req.query("page") || "1");
+		const limit = parseInt(c.req.query("limit") || "10");
 
-		const data = await this.userService.getALl(+page!, +limit!);
+		const data = await this.userService.getALl(page, limit);
 		return c.json({
 			message: "All Users",
 			data: data.data,
-			limit: data.limit,
-			page: data.page,
-			total: data.total,
+			meta: {
+				limit: data.limit,
+				page: data.page,
+				total: data.total,
+			}
 		});
 	}
 

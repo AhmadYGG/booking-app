@@ -1,9 +1,10 @@
 import { Context } from "hono";
 import { decode, verify } from "hono/jwt";
-import { AuthRepository } from "../modules/auth/auth.repository";
 import { db } from "../database/connection";
 import { AuthService } from "../modules/auth/auth.service";
 import { CreateTokenDTO } from "../modules/auth/auth.dto";
+import { refreshTokens } from "../database/schema/refreshTokens";
+import { and, eq } from "drizzle-orm";
 
 export async function verifyRefreshToken(token: string) {
 	const secret = process.env.JWT_SECRET!;
@@ -20,16 +21,23 @@ export async function verifyRefreshToken(token: string) {
 export async function recreateToken(
 	c: Context,
 	token: string,
-	username: string,
+	email: string,
 ): Promise<{ newToken: string; status: boolean }> {
 	const userAgent = c.req.header("User-Agent")!;
 
-	const authRepo = new AuthRepository(db);
-	const authService = new AuthService(authRepo);
-	const refreshToken = await authRepo.findByUserAgentAndUsername(
-		userAgent,
-		username,
-	);
+	const authService = new AuthService();
+	const refreshTokenData = await db
+		.select()
+		.from(refreshTokens)
+		.where(
+			and(
+				eq(refreshTokens.userAgent, userAgent),
+				eq(refreshTokens.email, email),
+			),
+		)
+		.limit(1);
+
+	const refreshToken = refreshTokenData[0];
 
 	if (!refreshToken) {
 		return {
@@ -38,7 +46,7 @@ export async function recreateToken(
 		};
 	}
 
-	const verified = await verifyRefreshToken(refreshToken!.token);
+	const verified = await verifyRefreshToken(refreshToken.token);
 
 	if (!verified) {
 		return {

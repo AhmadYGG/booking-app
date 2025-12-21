@@ -5,9 +5,9 @@ import { SQL } from "bun";
 
 export const pool = new SQL({
 	host: process.env.DB_HOST!,
-	username: process.env.postgres!,
-	database: process.env.postgres!,
-	password: process.env.postgres!,
+	username: process.env.DB_USER!,
+	database: process.env.DB_NAME!,
+	password: process.env.DB_PASSWORD!,
 	max: 50,
 	maxLifetime: 60,
 });

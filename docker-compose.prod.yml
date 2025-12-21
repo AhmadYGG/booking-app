@@ -3,22 +3,22 @@ services:
     build: .
     restart: unless-stopped
     ports:
-      - "3038:3000"
+      - "3000:3000"
     environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres-absense:5432/postgres
-      JWT_SECRET: secret123123131312asdasd213121dadadasd
-      DB_HOST: postgres-absense
+      DATABASE_URL: postgres://postgres:postgres@postgres-booking:5432/postgres
+      JWT_SECRET: ${JWT_SECRET}
+      DB_HOST: postgres-booking
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: postgres
     depends_on:
-      - postgres-absense
+      - postgres-booking
     networks:
       - booking-net
 
-  postgres-absense:
-    image: postgres:15
+  postgres-booking:
+    image: postgres:17
     restart: unless-stopped
     environment:
       POSTGRES_USER: "postgres"
@@ -27,7 +27,6 @@ services:
     volumes:
       - "booking-volume:/var/lib/postgresql/data"
     networks:
-      - adminerdev
       - booking-net
 
 volumes:

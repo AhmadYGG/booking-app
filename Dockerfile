@@ -10,16 +10,13 @@ COPY . .
 
 RUN bun run build
 
-EXPOSE 3000 
+FROM oven/bun:distroless AS runner
+
+WORKDIR /app
+
+COPY --from=builder /app/app .
+COPY --from=builder /app/.env.example ./.env
+
+EXPOSE 3000
 
 CMD [ "./app" ]
-
-# FROM debian:bookworm-slim AS runner
-#
-# WORKDIR /app
-#
-# COPY --from=builder /app .
-#
-# EXPOSE 3000
-#
-# CMD [ "./app" ]
