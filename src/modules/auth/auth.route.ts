@@ -13,7 +13,6 @@ const authService = new AuthService();
 const controller = new AuthController(authService, userService);
 
 route.post("/login", (c) => controller.login(c));
-route.post("/register", (c) => controller.register(c));
 route.get("/logout", (c) => controller.logout(c));
 
 export default route;

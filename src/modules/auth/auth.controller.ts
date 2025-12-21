@@ -66,15 +66,4 @@ export class AuthController {
 
     return c.json({ message: "You're logout" });
   }
-
-  async register(c: Context) {
-    const data = await c.req.json<CreateUserDTO>();
-    try {
-      await this.userService.create(data);
-      return c.json({ message: "register success" });
-    } catch (e: any) {
-      console.log("error: ", e);
-      return c.json({ message: "register failed", error: e.message }, 500);
-    }
-  }
 }
