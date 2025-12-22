@@ -81,4 +81,15 @@ export class BookingRepository {
             .where(eq(bookings.id, id))
             .returning();
     }
+
+    async findByCustomerID(customerId: number) {
+        return await this.db.query.bookings.findMany({
+            where: eq(bookings.customerId, customerId),
+            with: {
+                service: true,
+                payments: true,
+            },
+            orderBy: (bookings, { desc }) => [desc(bookings.bookingDate), desc(bookings.startTime)],
+        });
+    }
 }

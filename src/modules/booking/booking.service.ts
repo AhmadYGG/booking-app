@@ -68,4 +68,8 @@ export class BookingService {
         if (!booking) throw new Error("Booking not found");
         return booking;
     }
+
+    async getCustomerHistory(customerId: number) {
+        return await this.bookingRepo.findByCustomerID(customerId);
+    }
 }

@@ -2,9 +2,9 @@ import { Context } from "hono";
 import { UserService } from "../user/user.service";
 import { AuthService } from "./auth.service";
 import { LoginDTO } from "./auth.dto";
-import { CreateUserDTO } from "../user/user.dto";
 import { setCookie } from "hono/cookie";
 import { cookieOption, cookieOptionNonHttp } from "../../common/cookieOption";
+import { BadRequestError, UnauthorizedError } from "../../common/errors";
 
 export class AuthController {
 	constructor(
@@ -15,8 +15,9 @@ export class AuthController {
 	async login(c: Context) {
 		const data = await c.req.json<LoginDTO>();
 		const user = await this.userService.getByEmail(data.email);
+
 		if (!user) {
-			return c.json({ message: "invalid email or password" }, 401);
+			throw new UnauthorizedError("invalid email or password");
 		}
 
 		const verified = await this.authService.verifyPassword(
@@ -25,7 +26,7 @@ export class AuthController {
 		);
 
 		if (!verified) {
-			return c.json({ message: "invalid email or password" }, 401);
+			throw new UnauthorizedError("invalid email or password");
 		}
 
 		const userAgent = c.req.header("User-Agent")!;
@@ -46,14 +47,11 @@ export class AuthController {
 	async logout(c: Context) {
 		const userAgent = c.req.header("User-Agent")!;
 		if (!userAgent) {
-			return c.json({ message: "You're already logout" });
+			throw new BadRequestError("You're already logout");
 		}
 
-		try {
-			await this.authService.deleteRefreshToken(userAgent);
-		} catch (error) {
-			return c.json({ message: "You're already logout" });
-		}
+		// Let service throw if needed, or catch and rethrow as AppError
+		await this.authService.deleteRefreshToken(userAgent);
 
 		setCookie(c, "token", "invalid", cookieOption);
 

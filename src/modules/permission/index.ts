@@ -29,6 +29,8 @@ class PermissionService {
     }
 }
 
+import { NotFoundError } from "../../common/errors";
+
 const service = new PermissionService();
 
 permissionRoute.get("/", async (c: Context) => {
@@ -39,7 +41,7 @@ permissionRoute.get("/", async (c: Context) => {
 permissionRoute.get("/:id", async (c: Context) => {
     const id = parseInt(c.req.param("id"));
     const data = await service.getById(id);
-    if (!data) return c.json({ message: "Permission not found" }, 404);
+    if (!data) throw new NotFoundError("Permission not found");
     return c.json({ data });
 });
 

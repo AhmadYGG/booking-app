@@ -9,11 +9,27 @@ import user from "./modules/user/user.route";
 import booking from "./modules/booking/booking.route";
 import payment from "./modules/payment/payment.route";
 
+import { AppError } from "./common/errors";
+
 const app = new Hono()
 app.use("*", cors());
 
 app.onError((err, c) => {
-	console.error(`[GLOBAL ERROR HANDLER] Error: ${err.message}`);
+	// 1. Log the error for the developer
+	console.error(`[ERROR] ${err.name}: ${err.message}`);
+	if (process.env.NODE_ENV !== "production") {
+		console.error(err.stack);
+	}
+
+	// 2. If it's our custom AppError, use its status code
+	if (err instanceof AppError) {
+		return c.json({
+			message: err.message,
+			code: err.statusCode,
+		}, err.statusCode as any);
+	}
+
+	// 3. Fallback for unexpected errors
 	return c.json(
 		{
 			message: "Internal Server Error!",

@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import { BookingService } from "./booking.service";
 import { CreateBookingDTO, UpdateBookingStatusDTO } from "./booking.dto";
+import { NotFoundError } from "../../common/errors";
 
 export class BookingController {
     constructor(private bookingService: BookingService) { }
@@ -24,28 +25,20 @@ export class BookingController {
     async getByID(c: Context) {
         const id = parseInt(c.req.param("id"));
         const data = await this.bookingService.getByID(id);
-        if (!data) return c.json({ message: "Booking not found" }, 404);
+        if (!data) throw new NotFoundError("Booking not found");
         return c.json({ data });
     }
 
     async post(c: Context) {
-        try {
-            const body = await c.req.json<CreateBookingDTO>();
-            const data = await this.bookingService.create(body);
-            return c.json({ data, message: "Booking created successfully" }, 201);
-        } catch (e: any) {
-            return c.json({ message: e.message || "Failed to create booking" }, 400);
-        }
+        const body = await c.req.json<CreateBookingDTO>();
+        const data = await this.bookingService.create(body);
+        return c.json({ data, message: "Booking created successfully" }, 201);
     }
 
     async updateStatus(c: Context) {
         const id = parseInt(c.req.param("id"));
-        try {
-            const body = await c.req.json<UpdateBookingStatusDTO>();
-            const data = await this.bookingService.updateStatus(id, body.status);
-            return c.json({ data, message: "Booking status updated" });
-        } catch (e: any) {
-            return c.json({ message: e.message || "Failed to update status" }, 400);
-        }
+        const body = await c.req.json<UpdateBookingStatusDTO>();
+        const data = await this.bookingService.updateStatus(id, body.status);
+        return c.json({ data, message: "Booking status updated" });
     }
 }

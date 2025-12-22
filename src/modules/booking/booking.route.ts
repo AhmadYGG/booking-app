@@ -15,6 +15,11 @@ const controller = new BookingController(service);
 
 route.get("/", adminGuard, (c) => controller.get(c));
 route.get("/:id", adminGuard, (c) => controller.getByID(c));
+route.get("/customer/:id/history", adminGuard, async (c) => {
+    const id = parseInt(c.req.param("id"));
+    const data = await service.getCustomerHistory(id);
+    return c.json({ data });
+});
 route.post("/", userGuard, vValidator("json", createBookingValidator), (c) => controller.post(c));
 route.patch("/:id/status", adminGuard, vValidator("json", updateBookingStatusValidator), (c) => controller.updateStatus(c));
 

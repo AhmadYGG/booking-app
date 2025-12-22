@@ -30,6 +30,8 @@ class RoleService {
     }
 }
 
+import { NotFoundError } from "../../common/errors";
+
 const service = new RoleService();
 
 roleRoute.get("/", async (c: Context) => {
@@ -40,7 +42,7 @@ roleRoute.get("/", async (c: Context) => {
 roleRoute.get("/:id", async (c: Context) => {
     const id = parseInt(c.req.param("id"));
     const data = await service.getById(id);
-    if (!data) return c.json({ message: "Role not found" }, 404);
+    if (!data) throw new NotFoundError("Role not found");
     return c.json({ data });
 });
 
