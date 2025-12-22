@@ -18,7 +18,7 @@ route.get("/", adminGuard, permissionGuard("user.view"), (c) => controller.get(c
 route.post("/", adminGuard, vValidator("json", createUserValidator), (c) =>
 	controller.post(c),
 );
-route.get("/:id", userGuard, (c) => controller.getByID(c));
+route.get("/:id", adminGuard, permissionGuard("user.view"), (c) => controller.getByID(c));
 route.put("/:id", adminGuard, vValidator("json", updateUserValidator), (c) =>
 	controller.update(c),
 );

@@ -7,12 +7,12 @@ import { setCookie } from "hono/cookie";
 import { cookieOption, cookieOptionNonHttp } from "../../common/cookieOption";
 
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private userService: UserService,
-  ) {}
+	constructor(
+		private authService: AuthService,
+		private userService: UserService,
+	) { }
 
-  	async login(c: Context) {
+	async login(c: Context) {
 		const data = await c.req.json<LoginDTO>();
 		const user = await this.userService.getByEmail(data.email);
 		if (!user) {
@@ -39,31 +39,24 @@ export class AuthController {
 
 		return c.json({
 			message: "login success",
-			data: {
-				token,
-				refreshToken,
-				user: {
-					email: user.email,
-					role: user.role,
-				},
-			},
+			role: user.role
 		});
 	}
 
-  async logout(c: Context) {
-    const userAgent = c.req.header("User-Agent")!;
-    if (!userAgent) {
-      return c.json({ message: "You're already logout" });
-    }
+	async logout(c: Context) {
+		const userAgent = c.req.header("User-Agent")!;
+		if (!userAgent) {
+			return c.json({ message: "You're already logout" });
+		}
 
-    try {
-      await this.authService.deleteRefreshToken(userAgent);
-    } catch (error) {
-      return c.json({ message: "You're already logout" });
-    }
+		try {
+			await this.authService.deleteRefreshToken(userAgent);
+		} catch (error) {
+			return c.json({ message: "You're already logout" });
+		}
 
-    setCookie(c, "token", "invalid", cookieOption);
+		setCookie(c, "token", "invalid", cookieOption);
 
-    return c.json({ message: "You're logout" });
-  }
+		return c.json({ message: "You're logout" });
+	}
 }

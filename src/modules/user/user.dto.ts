@@ -8,6 +8,7 @@ export type UpdateUserDTO = {
 	phone?: string;
 	role?: string;
 	isActive?: boolean;
+	password?: string;
 };
 
 export const createUserValidator = v.object({
@@ -24,4 +25,5 @@ export const updateUserValidator = v.object({
 	phone: v.optional(v.string()),
 	role: v.optional(v.string()),
 	isActive: v.optional(v.boolean()),
+	password: v.optional(v.pipe(v.string(), v.minLength(6))),
 });

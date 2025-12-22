@@ -5,7 +5,7 @@ import { CreateUserDTO } from "./user.dto";
 import { password } from "bun";
 
 export class UserRepository {
-	constructor(private db: DB) {}
+	constructor(private db: DB) { }
 
 	async find(page: number = 1, limit: number = 10) {
 		const offset = (page - 1) * limit;
@@ -18,7 +18,9 @@ export class UserRepository {
 					phone: users.phone,
 					role: users.role,
 					isActive: users.isActive,
+					lastLoginAt: users.lastLoginAt,
 					createdAt: users.createdAt,
+					updatedAt: users.updatedAt,
 				})
 				.from(users)
 				.limit(limit)
@@ -51,6 +53,9 @@ export class UserRepository {
 				phone: users.phone,
 				role: users.role,
 				isActive: users.isActive,
+				lastLoginAt: users.lastLoginAt,
+				createdAt: users.createdAt,
+				updatedAt: users.updatedAt,
 			})
 			.from(users)
 			.where(eq(users.id, id))

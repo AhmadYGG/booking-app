@@ -3,6 +3,8 @@ import { drizzle } from "drizzle-orm/bun-sql";
 import type { ReturnTypeOrValue } from "drizzle-orm";
 import { SQL } from "bun";
 
+import * as schema from "./schema";
+
 export const pool = new SQL({
 	host: process.env.DB_HOST!,
 	username: process.env.DB_USER!,
@@ -12,5 +14,5 @@ export const pool = new SQL({
 	maxLifetime: 60,
 });
 
-export const db = drizzle({ client: pool });
-export type DB = ReturnTypeOrValue<typeof db>;
+export const db = drizzle({ client: pool, schema });
+export type DB = typeof db;

@@ -5,6 +5,9 @@ import role from "./modules/role";
 import permission from "./modules/permission";
 import user from "./modules/user/user.route";
 
+import booking from "./modules/booking/booking.route";
+import payment from "./modules/payment/payment.route";
+
 const app = new Hono()
 app.use("*", cors());
 
@@ -24,6 +27,8 @@ api.route("/auth", auth);
 api.route("/roles", role);
 api.route("/permissions", permission);
 api.route("/users", user);
+api.route("/bookings", booking);
+api.route("/payments", payment);
 
 app.route("/api", api);
 
