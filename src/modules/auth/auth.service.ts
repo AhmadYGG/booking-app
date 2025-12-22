@@ -7,9 +7,11 @@ import { refreshTokens } from "../../database/schema/refreshTokens";
 import { eq, and } from "drizzle-orm";
 
 export class AuthService {
-	private secret: string = process.env.JWT_SECRET!;
+	private get secret(): string {
+		return process.env.JWT_SECRET!;
+	}
 
-	constructor() {}
+	constructor() { }
 
 	async verifyPassword(passwordTxt: string, hashPassword: string) {
 		const verified = await password.verify(passwordTxt, hashPassword);
@@ -40,7 +42,7 @@ export class AuthService {
 			userAgent: userAgent,
 			token: token,
 		};
-		
+
 		await db
 			.insert(refreshTokens)
 			.values(data)

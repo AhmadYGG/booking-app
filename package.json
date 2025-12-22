@@ -5,7 +5,9 @@
     "build": "bun build ./src/index.ts --compile --target=bun --outfile app",
     "seed:admin": "bun ./src/database/seed-admin.ts",
     "push": "drizzle-kit push",
-    "test": "bun test --coverage"
+    "test": "bun test --coverage",
+    "generate": "bun x drizzle-kit generate",
+    "migrate": "bun x drizzle-kit migrate"
   },
   "dependencies": {
     "@hono/valibot-validator": "^0.6.1",

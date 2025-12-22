@@ -11,14 +11,11 @@ import { CreateTokenDTO } from "../modules/auth/auth.dto";
 export const permissionGuard = (requiredPermission: string) => {
   return createMiddleware(async (c: Context, next: Next) => {
     const user = c.get("jwtPayload") as CreateTokenDTO;
-    
+
     if (!user) {
       return c.json({ message: "unauthorized" }, 401);
     }
 
-    // Role 'owner' or 'admin' bypasses permission check if you want, 
-    // but standard RBAC usually checks even for them unless they are superadmin.
-    // For now, let's keep it strict or allow 'owner' to bypass.
     if (user.role === 'owner') {
       return next();
     }
