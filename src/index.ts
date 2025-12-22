@@ -8,6 +8,7 @@ import user from "./modules/user/user.route";
 
 import booking from "./modules/booking/booking.route";
 import payment from "./modules/payment/payment.route";
+import service from "./modules/service/service.route";
 
 import { AppError } from "./common/errors";
 
@@ -46,6 +47,7 @@ api.route("/permissions", permission);
 api.route("/users", user);
 api.route("/bookings", booking);
 api.route("/payments", payment);
+api.route("/services", service);
 
 app.route("/api", api);
 
