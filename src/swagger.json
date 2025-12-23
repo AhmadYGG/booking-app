@@ -1,0 +1,552 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Booking App API",
+        "version": "1.0.0",
+        "description": "API documentation for the Booking Application"
+    },
+    "servers": [
+        {
+            "url": "/api",
+            "description": "Main API prefix"
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "cookieAuth": {
+                "type": "apiKey",
+                "in": "cookie",
+                "name": "token"
+            }
+        },
+        "schemas": {
+            "AppError": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "type": "integer"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User Login",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "role": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User Logout",
+                "responses": {
+                    "200": {
+                        "description": "Logout successful"
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all users (Admin only)",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of users"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user (Admin only)",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "password",
+                                    "roleId"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "roleId": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User created"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by ID",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User data"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "roleId": {
+                                        "type": "integer"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User updated"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Delete user",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User deleted"
+                    }
+                }
+            }
+        },
+        "/services": {
+            "get": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Get all services",
+                "responses": {
+                    "200": {
+                        "description": "List of services"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Create service (Admin only)",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "serviceName",
+                                    "durationMinutes",
+                                    "price"
+                                ],
+                                "properties": {
+                                    "serviceName": {
+                                        "type": "string"
+                                    },
+                                    "durationMinutes": {
+                                        "type": "integer"
+                                    },
+                                    "price": {
+                                        "type": "number"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "isActive": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Service created"
+                    }
+                }
+            }
+        },
+        "/services/{id}/status": {
+            "patch": {
+                "tags": [
+                    "Services"
+                ],
+                "summary": "Toggle service status (Admin only)",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "isActive"
+                                ],
+                                "properties": {
+                                    "isActive": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Status updated"
+                    }
+                }
+            }
+        },
+        "/bookings": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Get all bookings (Admin only)",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of bookings"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Create booking",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "serviceId",
+                                    "bookingDate",
+                                    "startTime"
+                                ],
+                                "properties": {
+                                    "serviceId": {
+                                        "type": "integer"
+                                    },
+                                    "bookingDate": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "startTime": {
+                                        "type": "string",
+                                        "pattern": "^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
+                                    },
+                                    "notes": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Booking created"
+                    }
+                }
+            }
+        },
+        "/bookings/customer/{id}/history": {
+            "get": {
+                "tags": [
+                    "Bookings"
+                ],
+                "summary": "Customer booking history",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Booking history"
+                    }
+                }
+            }
+        },
+        "/payments": {
+            "get": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Get all payments (Admin only)",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of payments"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Payments"
+                ],
+                "summary": "Process payment (Admin only)",
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "required": [
+                                    "bookingId",
+                                    "amount",
+                                    "paymentMethod"
+                                ],
+                                "properties": {
+                                    "bookingId": {
+                                        "type": "integer"
+                                    },
+                                    "amount": {
+                                        "type": "number"
+                                    },
+                                    "paymentMethod": {
+                                        "type": "string",
+                                        "enum": [
+                                            "CASH",
+                                            "TRANSFER",
+                                            "QRIS"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Payment processed"
+                    }
+                }
+            }
+        }
+    }
+}

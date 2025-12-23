@@ -11,9 +11,13 @@ import payment from "./modules/payment/payment.route";
 import service from "./modules/service/service.route";
 
 import { AppError } from "./common/errors";
+import { swaggerUI } from "@hono/swagger-ui";
+import swaggerSpec from "./swagger.json";
 
 const app = new Hono()
 app.use("*", cors());
+
+app.get("/api/docs", swaggerUI({ spec: swaggerSpec } as any));
 
 app.onError((err, c) => {
 	// 1. Log the error for the developer
