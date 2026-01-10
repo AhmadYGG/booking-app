@@ -4,20 +4,18 @@ import { cors } from "hono/cors";
 import auth from "./modules/auth";
 import role from "./modules/role";
 import permission from "./modules/permission";
-import user from "./modules/user/user.route";
+import user from "./modules/user";
 
-import booking from "./modules/booking/booking.route";
-import payment from "./modules/payment/payment.route";
-import service from "./modules/service/service.route";
+import booking from "./modules/booking";
+import payment from "./modules/payment";
+import service from "./modules/service";
 
 import { AppError } from "./common/errors";
 import { swaggerUI } from "@hono/swagger-ui";
-import swaggerSpec from "./swagger.json";
+import { openAPIRouteHandler } from "hono-openapi";
 
 const app = new Hono()
 app.use("*", cors());
-
-app.get("/api/docs", swaggerUI({ spec: swaggerSpec } as any));
 
 app.onError((err, c) => {
 	// 1. Log the error for the developer
@@ -52,6 +50,19 @@ api.route("/users", user);
 api.route("/bookings", booking);
 api.route("/payments", payment);
 api.route("/services", service);
+
+// OpenAPI Documentation
+api.get("/doc", openAPIRouteHandler(app, {
+	documentation: {
+		info: {
+			title: "Booking App API",
+			version: "1.0.0",
+			description: "API for managing bookings, services, payments and users",
+		},
+		servers: [{ url: "http://localhost:3000", description: "Local Server" }],
+	},
+}));
+api.get("/ui", swaggerUI({ url: "/api/doc" }));
 
 app.route("/api", api);
 

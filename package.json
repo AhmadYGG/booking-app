@@ -10,13 +10,16 @@
     "migrate": "bun x drizzle-kit migrate"
   },
   "dependencies": {
+    "@hono/standard-validator": "^0.2.1",
     "@hono/swagger-ui": "^0.5.2",
     "@hono/valibot-validator": "^0.6.1",
+    "@valibot/to-json-schema": "^1.5.0",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "drizzle": "^1.4.0",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.11.1",
+    "hono-openapi": "^1.1.2",
     "pg": "^8.16.3",
     "valibot": "^1.2.0"
   },
