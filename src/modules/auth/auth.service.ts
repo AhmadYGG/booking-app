@@ -1,5 +1,6 @@
 import { password } from "bun";
 import { sign } from "hono/jwt";
+import { AuthRepository } from "./auth.repository";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { CreateRefreshTokenDTO, CreateTokenDTO } from "./auth.dto";
 import { db } from "../../database/connection";
@@ -7,6 +8,8 @@ import { refreshTokens } from "../../database/schema/refreshTokens";
 import { eq, and } from "drizzle-orm";
 
 export class AuthService {
+	constructor(private readonly authRepo: AuthRepository) { }
+
 	private get secret(): string {
 		return process.env.JWT_SECRET!;
 	}
@@ -43,16 +46,25 @@ export class AuthService {
 			token: token,
 		};
 
-		await db
-			.insert(refreshTokens)
-			.values(data)
-			.onConflictDoUpdate({
-				target: refreshTokens.userAgent,
-				set: {
+		try {
+			await db
+				.insert(refreshTokens)
+				.values({
 					email: data.email,
+					userAgent: data.userAgent,
 					token: data.token,
-				},
-			});
+				})
+				.onConflictDoUpdate({
+					target: refreshTokens.userAgent,
+					set: {
+						email: data.email,
+						token: data.token,
+					},
+				});
+		} catch (error) {
+			console.error("Failed to upsert refresh token:", error);
+			throw error;
+		}
 		return token;
 	}
 
@@ -60,5 +72,9 @@ export class AuthService {
 		return await db
 			.delete(refreshTokens)
 			.where(eq(refreshTokens.userAgent, userAgent));
+	}
+
+	async logout(accessToken: string) {
+		await this.authRepo.deleteToken(accessToken);
 	}
 }

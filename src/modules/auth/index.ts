@@ -3,11 +3,12 @@ import { UserService } from "../user/user.service";
 import { UserRepository } from "../user/user.repository";
 import { db } from "../../database/connection";
 import { AuthService } from "./auth.service";
-import { setCookie } from "hono/cookie";
+import { getCookie, setCookie } from "hono/cookie";
 import { cookieOption, cookieOptionNonHttp } from "../../common/cookieOption";
 import { BadRequestError, UnauthorizedError } from "../../common/errors";
 import { LoginDTO, loginRouteSchema, logoutRouteSchema, loginRequestSchema } from "./auth.dto";
 import { validator } from "hono-openapi";
+import { JWTPayload } from "hono/utils/jwt/types";
 
 const route = new Hono();
 
@@ -32,7 +33,7 @@ route.post("/login", loginRouteSchema, validator("json", loginRequestSchema), as
         throw new UnauthorizedError("invalid email or password");
     }
 
-    const userAgent = c.req.header("User-Agent")!;
+    const userAgent = c.req.header("User-Agent") || "unknown";
 
     const [token, refreshToken] = await Promise.all([
         authService.createToken(user, 15),
@@ -48,16 +49,26 @@ route.post("/login", loginRouteSchema, validator("json", loginRequestSchema), as
 });
 
 route.get("/logout", logoutRouteSchema, async (c) => {
-    const userAgent = c.req.header("User-Agent")!;
-    if (!userAgent) {
-        throw new BadRequestError("You're already logout");
+    const token = getCookie(c, "token");
+    let payload!: JWTPayload;
+
+    if (!token) {
+        return c.json({ message: "unauthorized" }, 401);
     }
 
-    await authService.deleteRefreshToken(userAgent);
+    try {
+        payload = decode(token!).payload as JWTPayload;
+    } catch (error) {
+        return c.json({ message: "unauthorized" }, 401);
+    }
 
-    setCookie(c, "token", "invalid", cookieOption);
-
-    return c.json({ message: "You're logout" });
+    try {
+        await authService.logout(token);
+        deleteCookie(c, "token");
+        return c.json({ message: "Logout Success" });
+    } catch (e: any) {
+        return c.json({ message: e.message }, 500);
+    }
 });
 
 export default route;
