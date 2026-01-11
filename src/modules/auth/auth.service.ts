@@ -14,8 +14,6 @@ export class AuthService {
 		return process.env.JWT_SECRET!;
 	}
 
-	constructor() { }
-
 	async verifyPassword(passwordTxt: string, hashPassword: string) {
 		const verified = await password.verify(passwordTxt, hashPassword);
 		if (!verified) {

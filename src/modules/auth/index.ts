@@ -3,18 +3,21 @@ import { UserService } from "../user/user.service";
 import { UserRepository } from "../user/user.repository";
 import { db } from "../../database/connection";
 import { AuthService } from "./auth.service";
-import { getCookie, setCookie } from "hono/cookie";
+import { AuthRepository } from "./auth.repository";
+import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { cookieOption, cookieOptionNonHttp } from "../../common/cookieOption";
 import { BadRequestError, UnauthorizedError } from "../../common/errors";
 import { LoginDTO, loginRouteSchema, logoutRouteSchema, loginRequestSchema } from "./auth.dto";
 import { validator } from "hono-openapi";
 import { JWTPayload } from "hono/utils/jwt/types";
+import { decode } from "hono/jwt";
 
 const route = new Hono();
 
 const userRepo = new UserRepository(db);
 const userService = new UserService(userRepo);
-const authService = new AuthService();
+const authRepo = new AuthRepository(db);
+const authService = new AuthService(authRepo);
 
 route.post("/login", loginRouteSchema, validator("json", loginRequestSchema), async (c) => {
     const data = await c.req.json<LoginDTO>();

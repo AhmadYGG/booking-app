@@ -15,7 +15,14 @@ import { swaggerUI } from "@hono/swagger-ui";
 import { openAPIRouteHandler } from "hono-openapi";
 
 const app = new Hono()
-app.use("*", cors());
+app.use("*", cors({
+	origin: (origin) => {
+		// Allow any localhost for development, or specify your frontend origins
+		if (origin?.includes("localhost")) return origin;
+		return "http://localhost:5173"; // Default Vite port
+	},
+	credentials: true,
+}));
 
 app.onError((err, c) => {
 	// 1. Log the error for the developer

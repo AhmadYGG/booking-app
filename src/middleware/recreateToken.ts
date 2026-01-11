@@ -3,6 +3,7 @@ import { decode, verify } from "hono/jwt";
 import { db } from "../database/connection";
 import { AuthService } from "../modules/auth/auth.service";
 import { CreateTokenDTO } from "../modules/auth/auth.dto";
+import { AuthRepository } from "../modules/auth/auth.repository";
 import { refreshTokens } from "../database/schema/refreshTokens";
 import { and, eq } from "drizzle-orm";
 
@@ -25,7 +26,8 @@ export async function recreateToken(
 ): Promise<{ newToken: string; status: boolean }> {
 	const userAgent = c.req.header("User-Agent")!;
 
-	const authService = new AuthService();
+	const authRepo = new AuthRepository(db);
+	const authService = new AuthService(authRepo);
 	const refreshTokenData = await db
 		.select()
 		.from(refreshTokens)
