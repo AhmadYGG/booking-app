@@ -3,7 +3,7 @@
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "build": "bun build ./src/index.ts --compile --target=bun --outfile app",
-    "seed:admin": "bun ./src/database/seed-admin.ts",
+    "seed": "bun ./src/database/seed.ts",
     "push": "drizzle-kit push",
     "test": "bun test --coverage",
     "generate": "bun x drizzle-kit generate",

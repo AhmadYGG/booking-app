@@ -24,10 +24,16 @@ export class ServiceService {
     }
 
     async update(id: number, data: UpdateServiceDTO) {
-        const updateData: any = { ...data };
+        const updateData: any = {};
+        
+        if (data.serviceName !== undefined) updateData.serviceName = data.serviceName;
+        if (data.durationMinutes !== undefined) updateData.durationMinutes = data.durationMinutes;
+        if (data.description !== undefined) updateData.description = data.description;
+        if (data.isActive !== undefined) updateData.isActive = data.isActive;
         if (data.price !== undefined) {
             updateData.price = data.price.toString();
         }
+
         return await this.serviceRepository.update(id, updateData);
     }
 

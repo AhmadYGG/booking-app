@@ -7,10 +7,11 @@ import { AuthRepository } from "./auth.repository";
 import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { cookieOption, cookieOptionNonHttp } from "../../common/cookieOption";
 import { BadRequestError, UnauthorizedError } from "../../common/errors";
-import { LoginDTO, loginRouteSchema, logoutRouteSchema, loginRequestSchema } from "./auth.dto";
+import { LoginDTO, loginRouteSchema, logoutRouteSchema, loginRequestSchema, checkAuthRouteSchema, CreateTokenDTO } from "./auth.dto";
 import { validator } from "hono-openapi";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { decode } from "hono/jwt";
+import { userGuard } from "../../middleware/guard";
 
 const route = new Hono();
 
@@ -72,6 +73,12 @@ route.get("/logout", logoutRouteSchema, async (c) => {
     } catch (e: any) {
         return c.json({ message: e.message }, 500);
     }
+});
+
+route.get("/check", checkAuthRouteSchema, userGuard, async (c) => {
+    return c.json({
+        success: true
+    });
 });
 
 export default route;

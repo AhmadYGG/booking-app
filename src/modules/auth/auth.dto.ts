@@ -18,6 +18,10 @@ export const logoutResponseSchema = v.object({
 	message: v.string(),
 });
 
+export const checkAuthResponseSchema = v.object({
+	success: v.boolean(),
+});
+
 // Types
 export interface LoginDTO {
 	email: string;
@@ -63,6 +67,23 @@ export const logoutRouteSchema = describeRoute({
 		},
 		400: {
 			description: "Already logged out",
+		},
+	},
+});
+
+export const checkAuthRouteSchema = describeRoute({
+	tags: ["Auth"],
+	summary: "Check Authentication",
+	description: "Verify if the current session is still valid",
+	responses: {
+		200: {
+			description: "Session is valid",
+			content: {
+				"application/json": { schema: resolver(checkAuthResponseSchema) },
+			},
+		},
+		401: {
+			description: "Unauthorized",
 		},
 	},
 });

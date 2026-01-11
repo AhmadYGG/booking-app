@@ -10,7 +10,13 @@ export const CreateServiceSchema = v.object({
     isActive: v.optional(v.boolean()),
 });
 
-export const UpdateServiceSchema = v.partial(CreateServiceSchema);
+export const UpdateServiceSchema = v.object({
+    serviceName: v.optional(v.pipe(v.string(), v.minLength(3, "Service name must be at least 3 characters"))),
+    durationMinutes: v.optional(v.pipe(v.number(), v.minValue(1, "Duration must be at least 1 minute"))),
+    price: v.optional(v.pipe(v.number(), v.minValue(0, "Price cannot be negative"))),
+    description: v.optional(v.string()),
+    isActive: v.optional(v.boolean()),
+});
 
 export const ToggleServiceStatusSchema = v.object({
     isActive: v.boolean(),

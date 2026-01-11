@@ -2,7 +2,7 @@
     "info": {
         "_postman_id": "a76b052c-04ea-43f0-93f7-788d597a7464",
         "name": "Booking App API",
-        "description": "Professional API Collection for Booking Application including Auth, Users, Bookings, and Payments.",
+        "description": "Professional API Collection for Booking Application including Auth, Users, Bookings, Services, and Payments.",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "item": [
@@ -50,6 +50,24 @@
                                 "api",
                                 "auth",
                                 "logout"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Check Auth",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/check",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "check"
                             ]
                         }
                     }
@@ -178,6 +196,155 @@
             ]
         },
         {
+            "name": "Services",
+            "item": [
+                {
+                    "name": "List Services",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/services?page=1&limit=10",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "services"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Service by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/services/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "services",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Service",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"serviceName\": \"Men's Haircut\",\n    \"durationMinutes\": 30,\n    \"price\": 50000,\n    \"description\": \"Professional haircut for men\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/services",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "services"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Service",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"serviceName\": \"Men's Haircut Updated\",\n    \"durationMinutes\": 45,\n    \"price\": 60000\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/services/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "services",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Toggle Service Status",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"isActive\": false\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/services/1/status",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "services",
+                                "1",
+                                "status"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Service",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/services/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "services",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
             "name": "Bookings",
             "item": [
                 {
@@ -203,6 +370,44 @@
                                     "key": "limit",
                                     "value": "10"
                                 }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Booking by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/bookings/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "bookings",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Customer History",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/bookings/customer/1/history",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "bookings",
+                                "customer",
+                                "1",
+                                "history"
                             ]
                         }
                     }
@@ -284,6 +489,24 @@
                     }
                 },
                 {
+                    "name": "Get Payment by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/payments/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "payments",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
                     "name": "Process Payment",
                     "request": {
                         "method": "POST",
@@ -312,7 +535,7 @@
             ]
         },
         {
-            "name": "Roles & Permissions",
+            "name": "Roles",
             "item": [
                 {
                     "name": "List Roles",
@@ -332,6 +555,100 @@
                     }
                 },
                 {
+                    "name": "Get Role by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/roles/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "roles",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Role",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Manager\",\n    \"slug\": \"manager\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/roles",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "roles"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Role",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Manager Updated\",\n    \"slug\": \"manager-updated\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/roles/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "roles",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Role",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/roles/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "roles",
+                                "1"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Permissions",
+            "item": [
+                {
                     "name": "List Permissions",
                     "request": {
                         "method": "GET",
@@ -344,6 +661,95 @@
                             "path": [
                                 "api",
                                 "permissions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Permission by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/permissions/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "permissions",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Create Permission",
+                    "request": {
+                        "method": "POST",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Edit Settings\",\n    \"slug\": \"settings.edit\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/permissions",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "permissions"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Update Permission",
+                    "request": {
+                        "method": "PUT",
+                        "header": [],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"name\": \"Edit Settings Updated\",\n    \"slug\": \"settings.edit.updated\"\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/permissions/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "permissions",
+                                "1"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Delete Permission",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/permissions/1",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "permissions",
+                                "1"
                             ]
                         }
                     }
